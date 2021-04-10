@@ -1,0 +1,13 @@
+version: "3.9"
+services:
+  service:
+    build: .
+    env_file: .env
+    container_name: api
+    volumes:
+      - './src:/opt/bank/src'
+    ports:
+      - '3001:3001'
+    environment:
+      - NODE_ENV=development
+    
