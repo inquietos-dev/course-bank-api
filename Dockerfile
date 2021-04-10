@@ -21,10 +21,10 @@ COPY nest-cli.json /opt/$NAME/
 COPY src /opt/$NAME/src
 RUN npm run build
 
-RUN chown $USER:$USER /opt/$NAME
+# RUN chown $USER:$USER /opt/$NAME
 
 EXPOSE 3000
-USER $USER
+# USER $USER
 
 ENTRYPOINT [ "npm" ]
 CMD ["run", "start:dev"]
