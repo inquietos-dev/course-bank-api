@@ -6,7 +6,7 @@ import {
   Get,
   Param,
   Patch,
-  Post,
+  Post, Query,
 } from '@nestjs/common';
 
 @Controller('user')
@@ -14,8 +14,8 @@ export class UserController {
   constructor(private userService: UserService) {}
 
   @Get()
-  getAll() {
-    return this.userService.getAll();
+  getAll(@Query('limit') limit) {
+    return this.userService.getAll(parseInt(limit));
   }
 
   @Get(':id')
@@ -24,11 +24,17 @@ export class UserController {
   }
 
   @Post()
-  create(@Body() body) {}
+  create(@Body() body) {
+    return this.userService.create(body);
+  }
 
   @Patch(':id')
-  update() {}
+  update(@Param('id') id, @Body() body) {
+    return this.userService.update(parseInt(id, 10), body)
+  }
 
   @Delete(':id')
-  delete() {}
+  delete(@Param('id') id) {
+    return this.userService.delete(parseInt(id));
+  }
 }
