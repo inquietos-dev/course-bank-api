@@ -1,4 +1,4 @@
-import { UserService } from './user.service';
+import { UsersService } from './users.service';
 import {
   Body,
   Controller,
@@ -11,8 +11,8 @@ import {
 } from '@nestjs/common';
 
 @Controller('user')
-export class UserController {
-  constructor(private userService: UserService) {}
+export class UsersController {
+  constructor(private userService: UsersService) {}
 
   @Get()
   getAll(@Query('limit') limit) {
