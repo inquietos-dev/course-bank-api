@@ -1,3 +1,5 @@
+import { CreateUserDto } from './dtos/create-user.dto';
+import { User } from './classes/user.class';
 import { Injectable, NotFoundException } from '@nestjs/common';
 
 @Injectable()
@@ -27,36 +29,41 @@ export class UsersService {
     },
   ];
 
-  public getAll(limit: number) {
-    return this.users.splice(limit);
+  public getAll(limit: number): User[] {
+    return this.users.splice(limit).map((u) => new User(u));
   }
 
-  public getOne(id: number) {
+  public getOne(id: number): User {
     const user = this.users.find((u) => u.id === id);
     if (!user) {
       throw new NotFoundException(`User with id ${id} does not exist`);
     }
-    return user;
+
+    return new User(user);
   }
 
-  public create(body: any) {
-    body.id = this.users.length + 1;
-    this.users.push(body);
-    return body;
+  public create(body: CreateUserDto): User {
+    const newUser = {
+      ...body,
+      id: this.users.length + 1,
+      createdAt: new Date(),
+    };
+    this.users.push(newUser);
+    return new User(newUser);
   }
 
-  public update(id: number, body: any) {
+  public update(id: number, body: any): User {
     const user = this.getOne(id);
     Object.assign(user, body);
-    return user;
+    return new User(user);
   }
 
-  public delete(id: number) {
+  public delete(id: number): User {
     const user = this.users.find((u) => u.id === id);
     if (!user) {
       throw new NotFoundException(`User with id ${id} does not exist`);
     }
     this.users = this.users.filter((u) => u.id !== id);
-    return user;
+    return new User(user);
   }
 }
