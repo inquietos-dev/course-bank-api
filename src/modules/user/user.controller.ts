@@ -6,7 +6,8 @@ import {
   Get,
   Param,
   Patch,
-  Post, Query,
+  Post,
+  Query,
 } from '@nestjs/common';
 
 @Controller('user')
@@ -30,7 +31,7 @@ export class UserController {
 
   @Patch(':id')
   update(@Param('id') id, @Body() body) {
-    return this.userService.update(parseInt(id, 10), body)
+    return this.userService.update(parseInt(id, 10), body);
   }
 
   @Delete(':id')
