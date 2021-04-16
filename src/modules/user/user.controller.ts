@@ -24,11 +24,16 @@ export class UserController {
   }
 
   @Post()
-  create(@Body() body) {}
+  create(@Body() body) {
+    return this.userService.create(body);
+  }
 
   @Patch(':id')
-  update() {}
-
+  update(@Param('id') id, @Body() body) {
+    return this.userService.update(parseInt(id, 10), body);
+  }
   @Delete(':id')
-  delete() {}
+  delete(@Param('id') id) {
+    return this.userService.delete(parseInt(id, 10));
+  }
 }
