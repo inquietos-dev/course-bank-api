@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 
 @Injectable()
-export class UserService {
+export class UsersService {
   users = [
     {
       id: 1,
@@ -27,8 +27,8 @@ export class UserService {
     },
   ];
 
-  public getAll() {
-    return this.users;
+  public getAll(limit: number) {
+    return this.users.splice(limit);
   }
 
   public getOne(id: number) {
@@ -48,6 +48,7 @@ export class UserService {
   public update(id: number, body: any) {
     const user = this.getOne(id);
     Object.assign(user, body);
+    return user;
   }
 
   public delete(id: number) {
