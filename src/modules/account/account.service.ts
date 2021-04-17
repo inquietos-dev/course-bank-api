@@ -1,4 +1,12 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { UpdateBalanceDTO } from './dtos/update-balance.dto';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
+import { CreateAccountDTO } from './dtos/create-account.dto';
+import { UpdateAccountDTO } from './dtos/update-account.dto';
+import { Account } from './classes/account.class';
 
 @Injectable()
 export class AccountService {
@@ -18,34 +26,47 @@ export class AccountService {
   ];
 
   public getAll() {
-    return this.accounts;
+    return this.accounts.map((a) => new Account(a));
   }
 
-  public getOne(id: number) {
-    const user = this.accounts.find((u) => u.id === id);
-    if (!user) {
+  public getOne(id: number): Account {
+    const account = this.accounts.find((u) => u.id === id);
+    if (!account) {
       throw new NotFoundException(`Account with id ${id} does not exist`);
     }
-    return user;
+    return new Account(account);
   }
 
-  public create(body: any) {
-    body.id = this.accounts.length + 1;
-    this.accounts.push(body);
-    return body;
+  public create(body: CreateAccountDTO): Account {
+    const newAccount = { ...body, id: this.accounts.length + 1 };
+    this.accounts.push(newAccount);
+    return new Account(newAccount);
   }
 
-  public update(id: number, body: any) {
-    const user = this.getOne(id);
-    Object.assign(user, body);
+  public update(id: number, body: UpdateAccountDTO): Account {
+    const account = this.getOne(id);
+    Object.assign(account, body);
+    return new Account(account);
   }
 
-  public delete(id: number) {
-    const user = this.accounts.find((u) => u.id === id);
-    if (!user) {
-      throw new NotFoundException(`User with id ${id} does not exist`);
+  public delete(id: number): Account {
+    const account = this.accounts.find((u) => u.id === id);
+    if (!account) {
+      throw new NotFoundException(`Account with id ${id} does not exist`);
     }
     this.accounts = this.accounts.filter((u) => u.id !== id);
-    return user;
+    return new Account(account);
+  }
+
+  public updateBalance(id: number, body: UpdateBalanceDTO): Account {
+    const account = this.accounts.find((u) => u.id === id);
+    if (!account) {
+      throw new NotFoundException(`Account with id ${id} does not exist`);
+    }
+    if (account.amount + body.amount < 0) {
+      throw new BadRequestException(`The account doesn't have money`);
+    }
+    account.amount += body.amount;
+    return new Account(account);
   }
 }
