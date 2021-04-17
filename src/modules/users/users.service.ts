@@ -34,7 +34,6 @@ export class UsersService {
   ];
 
   constructor(
-    private notificationService: NotificationsService,
     private accountService: AccountService,
     private eventEmitter: EventEmitter2,
   ) {}
