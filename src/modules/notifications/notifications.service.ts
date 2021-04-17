@@ -1,10 +1,14 @@
-import { Injectable } from '@nestjs/common';
+import { HttpService, Injectable } from '@nestjs/common';
 
 @Injectable()
 export class NotificationsService {
-  constructor() {}
+  constructor(private httpService: HttpService) {}
 
-  public sendEmail(email: string): void {
-    console.log(email);
+  public async sendEmail(email: string): Promise<void> {
+    console.log(`Email to ${email}`);
+    const { data } = await this.httpService
+      .get('http://localhost:3001/')
+      .toPromise();
+    console.log(data);
   }
 }

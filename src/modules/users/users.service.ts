@@ -3,6 +3,8 @@ import { User } from './classes/user.class';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PaginationDto } from '../../common/dtos/pagination.dto';
 import { NotificationsService } from '../notifications/notifications.service';
+import { AccountService } from '../account/account.service';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 
 @Injectable()
 export class UsersService {
@@ -31,7 +33,11 @@ export class UsersService {
     },
   ];
 
-  constructor(private notificationService: NotificationsService) {}
+  constructor(
+    private notificationService: NotificationsService,
+    private accountService: AccountService,
+    private eventEmitter: EventEmitter2,
+  ) {}
 
   public getAll(pagination: PaginationDto): User[] {
     return this.users.splice(pagination.limit).map((u) => new User(u));
@@ -54,8 +60,13 @@ export class UsersService {
     };
     this.users.push(newUser);
 
-    // Enviar un email
-    this.notificationService.sendEmail(newUser.email);
+    this.eventEmitter.emit('notification.send', { email: newUser.email });
+
+    this.accountService.create({
+      alias: `Cuenta principal de ${newUser.name}`,
+      status: 'pending',
+      amount: 0,
+    });
 
     return new User(newUser);
   }

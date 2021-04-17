@@ -7,6 +7,7 @@ import {
 import { CreateAccountDTO } from './dtos/create-account.dto';
 import { UpdateAccountDTO } from './dtos/update-account.dto';
 import { Account } from './classes/account.class';
+import { PaginationDto } from '../../common/dtos/pagination.dto';
 
 @Injectable()
 export class AccountService {
@@ -25,7 +26,8 @@ export class AccountService {
     },
   ];
 
-  public getAll() {
+  public getAll(user: any, pagination: PaginationDto) {
+    console.log(`USER: ${JSON.stringify(user)}`);
     return this.accounts.map((a) => new Account(a));
   }
 

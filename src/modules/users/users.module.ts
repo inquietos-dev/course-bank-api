@@ -7,10 +7,10 @@ import {
   RequestMethod,
 } from '@nestjs/common';
 import { LoggerMiddleware } from '../../common/middlewares/logger.middleware';
-import { NotificationsModule } from '../notifications/notifications.module';
+import { AccountModule } from '../account/account.module';
 
 @Module({
-  imports: [NotificationsModule],
+  imports: [AccountModule],
   controllers: [UsersController],
   providers: [UsersService],
 })

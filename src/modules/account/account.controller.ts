@@ -14,6 +14,9 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { UpdateBalanceDTO } from './dtos/update-balance.dto';
+import { Pagination } from '../../common/decorators/pagination.decorator';
+import { PaginationDto } from '../../common/dtos/pagination.dto';
+import { User } from '../../common/decorators/user.decorator';
 
 @Controller('account')
 @UseInterceptors(ClassSerializerInterceptor)
@@ -21,8 +24,8 @@ export class AccountController {
   constructor(private accountService: AccountService) {}
 
   @Get()
-  getAll() {
-    return this.accountService.getAll();
+  getAll(@User() user: any, @Pagination() pagination: PaginationDto) {
+    return this.accountService.getAll(user, pagination);
   }
 
   @Get(':id')

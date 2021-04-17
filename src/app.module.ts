@@ -12,12 +12,16 @@ import { HealthModule } from './modules/health/health.module';
 import config from './app.config';
 import { UsersModule } from './modules/users/users.module';
 import { NotificationsModule } from './modules/notifications/notifications.module';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
       load: [config],
+    }),
+    EventEmitterModule.forRoot({
+      global: true,
     }),
     HealthModule,
     UsersModule,
