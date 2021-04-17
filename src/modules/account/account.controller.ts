@@ -1,15 +1,22 @@
+import { UpdateAccountDTO } from './dtos/update-account.dto';
+import { CreateAccountDTO } from './dtos/create-account.dto';
 import { AccountService } from './account.service';
 import {
   Body,
+  ClassSerializerInterceptor,
   Controller,
   Delete,
   Get,
   Param,
+  ParseIntPipe,
   Patch,
   Post,
+  UseInterceptors,
 } from '@nestjs/common';
+import { UpdateBalanceDTO } from './dtos/update-balance.dto';
 
 @Controller('account')
+@UseInterceptors(ClassSerializerInterceptor)
 export class AccountController {
   constructor(private accountService: AccountService) {}
 
@@ -19,22 +26,31 @@ export class AccountController {
   }
 
   @Get(':id')
-  getOne(@Param('id') id) {
-    return this.accountService.getOne(parseInt(id, 10));
+  getOne(@Param('id', ParseIntPipe) id: number) {
+    return this.accountService.getOne(id);
   }
 
   @Post()
-  create(@Body() body) {
+  create(@Body() body: CreateAccountDTO) {
     return this.accountService.create(body);
   }
 
   @Patch(':id')
-  update(@Param('id') id, @Body() body) {
-    return this.accountService.update(parseInt(id, 10), body);
+  update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() body: UpdateAccountDTO,
+  ) {
+    return this.accountService.update(id, body);
   }
 
   @Delete(':id')
-  delete(@Param('id') id) {
-    return this.accountService.delete(parseInt(id, 10));
+  delete(@Param('id', ParseIntPipe) id: number) {
+    return this.accountService.delete(id);
   }
+
+  @Post(':id/balance')
+  updateBalance(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() body: UpdateBalanceDTO,
+  ) {}
 }
