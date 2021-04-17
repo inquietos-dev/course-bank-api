@@ -21,9 +21,18 @@ async function bootstrap() {
     new ValidationPipe({
       transform: true,
       whitelist: true,
+      validateCustomDecorators: true,
     }),
   );
   app.useGlobalFilters(new HttpExceptionFilter());
+
+  app.use((req, res, next) => {
+    req.user = {
+      id: 1,
+      name: 'Pepe',
+    };
+    return next();
+  });
 
   await app.listen(process.env.PORT);
 }

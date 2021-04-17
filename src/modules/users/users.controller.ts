@@ -17,6 +17,8 @@ import {
 import { StringToArrayPipe } from '../../common/pipes/string-to-array.pipe';
 import { CreateUserDto } from './dtos/create-user.dto';
 import { UpdateUserDto } from './dtos/update-user.dto';
+import { Pagination } from '../../common/decorators/pagination.decorator';
+import { PaginationDto } from '../../common/dtos/pagination.dto';
 
 @Controller('user')
 @UseInterceptors(ClassSerializerInterceptor)
@@ -26,9 +28,9 @@ export class UsersController {
   @Get()
   getAll(
     @Query('ids', new StringToArrayPipe(false)) ids: number[],
-    @Query('limit') limit,
+    @Pagination() pagination: PaginationDto,
   ) {
-    return this.userService.getAll(parseInt(limit));
+    return this.userService.getAll(pagination);
   }
 
   @Get(':id')

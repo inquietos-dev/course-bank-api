@@ -1,6 +1,6 @@
 import {
   IsEmail,
-  IsEnum,
+  IsEnum, IsNumber,
   IsNumberString,
   IsOptional,
   IsString,
@@ -30,7 +30,7 @@ export class CreateUserDto {
   @IsEmail()
   email: string;
 
-  @IsNumberString()
+  @IsNumber()
   age: number;
 
   @IsString()

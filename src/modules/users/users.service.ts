@@ -1,6 +1,8 @@
 import { CreateUserDto } from './dtos/create-user.dto';
 import { User } from './classes/user.class';
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { PaginationDto } from '../../common/dtos/pagination.dto';
+import { NotificationsService } from '../notifications/notifications.service';
 
 @Injectable()
 export class UsersService {
@@ -29,8 +31,10 @@ export class UsersService {
     },
   ];
 
-  public getAll(limit: number): User[] {
-    return this.users.splice(limit).map((u) => new User(u));
+  constructor(private notificationService: NotificationsService) {}
+
+  public getAll(pagination: PaginationDto): User[] {
+    return this.users.splice(pagination.limit).map((u) => new User(u));
   }
 
   public getOne(id: number): User {
@@ -49,6 +53,10 @@ export class UsersService {
       createdAt: new Date(),
     };
     this.users.push(newUser);
+
+    // Enviar un email
+    this.notificationService.sendEmail(newUser.email);
+
     return new User(newUser);
   }
 
