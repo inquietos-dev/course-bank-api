@@ -28,9 +28,10 @@ export class UsersController {
   @Get()
   getAll(
     @Query('ids', new StringToArrayPipe(false)) ids: number[],
+    @Query('email') emailFilter: string,
     @Pagination() pagination: PaginationDto,
   ) {
-    return this.userService.getAll(pagination);
+    return this.userService.getAll(emailFilter, ids, pagination);
   }
 
   @Get(':id')

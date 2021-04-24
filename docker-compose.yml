@@ -1,4 +1,4 @@
-version: "3.9"
+version: '3.9'
 services:
   service:
     build: .
@@ -10,4 +10,12 @@ services:
       - '3001:3001'
     environment:
       - NODE_ENV=development
-    
+
+  postgres:
+    image: postgres:13.2
+    volumes:
+      - './bbdd:/var/lib/postgresql/data'
+    ports:
+      - 5432
+    environment:
+      - POSTGRES_PASSWORD=password

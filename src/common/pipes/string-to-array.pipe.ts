@@ -9,7 +9,7 @@ import {
 export class StringToArrayPipe implements PipeTransform {
   constructor(private isRequired = false) {}
 
-  transform(value: string, metadata: ArgumentMetadata): string[] {
+  transform(value: string, metadata: ArgumentMetadata): number[] {
     if (!value && this.isRequired) {
       throw new BadRequestException(`Query param is required`);
     }
@@ -18,6 +18,6 @@ export class StringToArrayPipe implements PipeTransform {
       return [];
     }
 
-    return value.split(',');
+    return value.split(',').map((n) => parseInt(n, 10));
   }
 }
