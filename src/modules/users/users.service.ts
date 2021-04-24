@@ -7,6 +7,7 @@ import { AccountService } from '../account/account.service';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { Repository } from 'typeorm';
 import { UserEntity } from '../database/entities/user.entity';
+import { AccountEntity } from '../database/entities/account.entity';
 
 @Injectable()
 export class UsersService {
@@ -67,7 +68,11 @@ export class UsersService {
   }
 
   private async getOneEntity(id: number): Promise<UserEntity> {
-    const user = await this.userRepository.findOne(id);
+    const user = await this.userRepository
+      .createQueryBuilder('u')
+      .andWhere('u.id = :id', { id })
+      .leftJoinAndSelect('u.account', 'ac')
+      .getOne();
     if (!user) {
       throw new NotFoundException(`User with id ${id} does not exist`);
     }
@@ -88,6 +93,11 @@ export class UsersService {
     user.password = body.password;
     user.role = body.role;
     user.age = body.age;
+
+    user.account = [new AccountEntity()];
+    user.account[0].status = 'ACTIVED';
+    user.account[0].amount = 0;
+    user.account[0].alias = 'principal';
 
     user = await this.userRepository.save(user);
 

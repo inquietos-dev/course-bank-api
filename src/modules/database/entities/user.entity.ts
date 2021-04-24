@@ -1,4 +1,11 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { AccountEntity } from './account.entity';
+import {
+  Column,
+  Entity,
+  OneToMany,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @Entity('user')
 export class UserEntity {
@@ -31,4 +38,9 @@ export class UserEntity {
     default: () => 'CURRENT_TIMESTAMP',
   })
   createdAt: Date;
+
+  @OneToMany((type) => AccountEntity, (account) => account.user, {
+    cascade: ['insert', 'update', 'remove'],
+  })
+  account: AccountEntity[];
 }

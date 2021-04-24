@@ -11,12 +11,14 @@ import {
   ParseIntPipe,
   Patch,
   Post,
+  Query,
   UseInterceptors,
 } from '@nestjs/common';
 import { UpdateBalanceDTO } from './dtos/update-balance.dto';
 import { Pagination } from '../../common/decorators/pagination.decorator';
 import { PaginationDto } from '../../common/dtos/pagination.dto';
 import { User } from '../../common/decorators/user.decorator';
+import { ParseFloatPipe } from 'src/common/pipes/parse-float.pipe';
 
 @Controller('account')
 @UseInterceptors(ClassSerializerInterceptor)
@@ -24,8 +26,12 @@ export class AccountController {
   constructor(private accountService: AccountService) {}
 
   @Get()
-  getAll(@User() user: any, @Pagination() pagination: PaginationDto) {
-    return this.accountService.getAll(user, pagination);
+  async getAll(
+    @Pagination() pagination: PaginationDto,
+    @Query('amount', new ParseFloatPipe(false)) amountFilter,
+    @Query('status') statusFilter,
+  ) {
+    return this.accountService.getAll(amountFilter, statusFilter, pagination);
   }
 
   @Get(':id')

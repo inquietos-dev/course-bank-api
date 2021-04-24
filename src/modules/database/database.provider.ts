@@ -1,3 +1,4 @@
+import { AccountEntity } from './entities/account.entity';
 import { UserEntity } from './entities/user.entity';
 import { ConfigService } from '@nestjs/config';
 import { Connection, createConnection } from 'typeorm';
@@ -24,6 +25,12 @@ export const databaseProviders = [
     provide: 'USER_REPOSITORY',
     useFactory: (connection: Connection) =>
       connection.getRepository(UserEntity),
+    inject: ['DATABASE_CONNECTION'],
+  },
+  {
+    provide: 'ACCOUNT_REPOSITORY',
+    useFactory: (connection: Connection) =>
+      connection.getRepository(AccountEntity),
     inject: ['DATABASE_CONNECTION'],
   },
 ];

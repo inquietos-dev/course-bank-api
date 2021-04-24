@@ -1,6 +1,7 @@
 import { UpdateBalanceDTO } from './dtos/update-balance.dto';
 import {
   BadRequestException,
+  Inject,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -8,67 +9,81 @@ import { CreateAccountDTO } from './dtos/create-account.dto';
 import { UpdateAccountDTO } from './dtos/update-account.dto';
 import { Account } from './classes/account.class';
 import { PaginationDto } from '../../common/dtos/pagination.dto';
+import { Repository } from 'typeorm';
+import { AccountEntity } from '../database/entities/account.entity';
 
 @Injectable()
 export class AccountService {
-  accounts = [
-    {
-      id: 1,
-      alias: 'Cuenta personal',
-      status: 'active',
-      amount: 100.24,
-    },
-    {
-      id: 2,
-      alias: 'Cuenta pareja',
-      status: 'blocked',
-      amount: 5862.25,
-    },
-  ];
+  constructor(
+    @Inject('ACCOUNT_REPOSITORY')
+    private accountRepository: Repository<AccountEntity>,
+  ) {}
 
-  public getAll(user: any, pagination: PaginationDto) {
-    console.log(`USER: ${JSON.stringify(user)}`);
-    return this.accounts.map((a) => new Account(a));
+  public async getAll(
+    amountFilter: number,
+    statusFilter: string,
+    pagination: PaginationDto,
+  ): Promise<Account[]> {
+    const accountsQuery = this.accountRepository
+      .createQueryBuilder('ac')
+      .offset(pagination.offset)
+      .limit(pagination.limit);
+
+    if (amountFilter) {
+      accountsQuery.andWhere('ac.amount > :amount', { amount: amountFilter });
+    }
+
+    if (statusFilter) {
+      accountsQuery.andWhere('ac.status = :status', { status: statusFilter });
+    }
+    const accounts = await accountsQuery.getMany();
+    return accounts.map((a) => new Account(a));
   }
 
-  public getOne(id: number): Account {
-    const account = this.accounts.find((u) => u.id === id);
+  private async getOneEntity(id: number): Promise<AccountEntity> {
+    const account = await this.accountRepository.findOne(id);
     if (!account) {
       throw new NotFoundException(`Account with id ${id} does not exist`);
     }
+    return account;
+  }
+
+  public async getOne(id: number): Promise<Account> {
+    const account = await this.getOneEntity(id);
     return new Account(account);
   }
 
-  public create(body: CreateAccountDTO): Account {
-    const newAccount = { ...body, id: this.accounts.length + 1 };
-    this.accounts.push(newAccount);
-    return new Account(newAccount);
-  }
-
-  public update(id: number, body: UpdateAccountDTO): Account {
-    const account = this.getOne(id);
+  public async create(body: CreateAccountDTO): Promise<Account> {
+    let account = new AccountEntity();
     Object.assign(account, body);
+    account = await this.accountRepository.save(account);
+
     return new Account(account);
   }
 
-  public delete(id: number): Account {
-    const account = this.accounts.find((u) => u.id === id);
-    if (!account) {
-      throw new NotFoundException(`Account with id ${id} does not exist`);
-    }
-    this.accounts = this.accounts.filter((u) => u.id !== id);
+  public async update(id: number, body: UpdateAccountDTO): Promise<Account> {
+    const account = await this.getOneEntity(id);
+    Object.assign(account, body);
+    await this.accountRepository.save(account);
     return new Account(account);
   }
 
-  public updateBalance(id: number, body: UpdateBalanceDTO): Account {
-    const account = this.accounts.find((u) => u.id === id);
-    if (!account) {
-      throw new NotFoundException(`Account with id ${id} does not exist`);
-    }
+  public async delete(id: number): Promise<Account> {
+    const account = await this.getOneEntity(id);
+    await this.accountRepository.remove(account);
+    return new Account(account);
+  }
+
+  public async updateBalance(
+    id: number,
+    body: UpdateBalanceDTO,
+  ): Promise<Account> {
+    const account = await this.getOneEntity(id);
     if (account.amount + body.amount < 0) {
       throw new BadRequestException(`The account doesn't have money`);
     }
     account.amount += body.amount;
+    await this.accountRepository.save(account);
     return new Account(account);
   }
 }
