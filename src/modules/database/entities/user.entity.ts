@@ -2,6 +2,7 @@ import { AccountEntity } from './account.entity';
 import {
   Column,
   Entity,
+  Index,
   ManyToMany,
   OneToMany,
   OneToOne,
@@ -9,6 +10,7 @@ import {
 } from 'typeorm';
 
 @Entity('user')
+@Index('fullname_index', ['name', 'surname'], { unique: true })
 export class UserEntity {
   @PrimaryGeneratedColumn()
   id: number;

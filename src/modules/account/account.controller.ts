@@ -1,3 +1,4 @@
+import { StringToArrayPipe } from './../../common/pipes/string-to-array.pipe';
 import { UpdateAccountDTO } from './dtos/update-account.dto';
 import { CreateAccountDTO } from './dtos/create-account.dto';
 import { AccountService } from './account.service';
@@ -29,14 +30,23 @@ export class AccountController {
   async getAll(
     @Pagination() pagination: PaginationDto,
     @Query('amount', new ParseFloatPipe(false)) amountFilter,
+    @Query('includes', new StringToArrayPipe(false, 'string')) includes,
     @Query('status') statusFilter,
   ) {
-    return this.accountService.getAll(amountFilter, statusFilter, pagination);
+    return this.accountService.getAll(
+      amountFilter,
+      statusFilter,
+      pagination,
+      includes,
+    );
   }
 
   @Get(':id')
-  getOne(@Param('id', ParseIntPipe) id: number) {
-    return this.accountService.getOne(id);
+  getOne(
+    @Param('id', ParseIntPipe) id: number,
+    @Query('includes', new StringToArrayPipe(false, 'string')) includes,
+  ) {
+    return this.accountService.getOne(id, includes);
   }
 
   @Post()
@@ -45,7 +55,7 @@ export class AccountController {
   }
 
   @Patch(':id')
-  update(
+  async update(
     @Param('id', ParseIntPipe) id: number,
     @Body() body: UpdateAccountDTO,
   ) {
@@ -53,13 +63,15 @@ export class AccountController {
   }
 
   @Delete(':id')
-  delete(@Param('id', ParseIntPipe) id: number) {
+  async delete(@Param('id', ParseIntPipe) id: number) {
     return this.accountService.delete(id);
   }
 
   @Post(':id/balance')
-  updateBalance(
+  async updateBalance(
     @Param('id', ParseIntPipe) id: number,
     @Body() body: UpdateBalanceDTO,
-  ) {}
+  ) {
+    return this.accountService.updateBalance(id, body);
+  }
 }

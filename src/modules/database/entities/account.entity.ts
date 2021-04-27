@@ -1,3 +1,4 @@
+import { MovementEntity } from './movement.entity';
 import { UserEntity } from './user.entity';
 import {
   Column,
@@ -6,6 +7,7 @@ import {
   JoinTable,
   ManyToMany,
   ManyToOne,
+  OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
@@ -21,7 +23,7 @@ export class AccountEntity {
   @Column('varchar', { length: 200 })
   alias: string;
 
-  @Column('decimal')
+  @Column('float')
   amount: number;
 
   @Column('timestamp', {
@@ -37,4 +39,13 @@ export class AccountEntity {
     inverseJoinColumn: { name: 'user_id', referencedColumnName: 'id' },
   })
   user: UserEntity[];
+
+  @OneToMany(
+    (type) => MovementEntity,
+    (movement: MovementEntity) => movement.account,
+    {
+      cascade: ['insert', 'update', 'remove'],
+    },
+  )
+  movements: MovementEntity[];
 }

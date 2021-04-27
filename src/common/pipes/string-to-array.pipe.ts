@@ -7,9 +7,9 @@ import {
 
 @Injectable()
 export class StringToArrayPipe implements PipeTransform {
-  constructor(private isRequired = false) {}
+  constructor(private isRequired = false, private type = 'number') {}
 
-  transform(value: string, metadata: ArgumentMetadata): number[] {
+  transform(value: string, metadata: ArgumentMetadata): (number | string)[] {
     if (!value && this.isRequired) {
       throw new BadRequestException(`Query param is required`);
     }
@@ -18,6 +18,8 @@ export class StringToArrayPipe implements PipeTransform {
       return [];
     }
 
-    return value.split(',').map((n) => parseInt(n, 10));
+    return value
+      .split(',')
+      .map((n) => (this.type === 'number' ? parseInt(n, 10) : n));
   }
 }
