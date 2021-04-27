@@ -3,6 +3,8 @@ import {
   Column,
   Entity,
   JoinColumn,
+  JoinTable,
+  ManyToMany,
   ManyToOne,
   OneToOne,
   PrimaryGeneratedColumn,
@@ -28,7 +30,11 @@ export class AccountEntity {
   })
   createdAt: Date;
 
-  @ManyToOne((type) => UserEntity, (user) => user.account)
-  @JoinColumn()
-  user: UserEntity;
+  @ManyToMany((type) => UserEntity, (user) => user.account)
+  @JoinTable({
+    name: 'user2account',
+    joinColumn: { name: 'account_id', referencedColumnName: 'id' },
+    inverseJoinColumn: { name: 'user_id', referencedColumnName: 'id' },
+  })
+  user: UserEntity[];
 }

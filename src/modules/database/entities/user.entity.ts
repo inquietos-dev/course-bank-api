@@ -2,6 +2,7 @@ import { AccountEntity } from './account.entity';
 import {
   Column,
   Entity,
+  ManyToMany,
   OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
@@ -39,7 +40,7 @@ export class UserEntity {
   })
   createdAt: Date;
 
-  @OneToMany((type) => AccountEntity, (account) => account.user, {
+  @ManyToMany((type) => AccountEntity, (account) => account.user, {
     cascade: ['insert', 'update', 'remove'],
   })
   account: AccountEntity[];
