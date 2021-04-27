@@ -10,6 +10,8 @@ services:
       - '3001:3001'
     environment:
       - NODE_ENV=development
+    depends_on:
+      - postgres
 
   postgres:
     image: postgres:13.2
