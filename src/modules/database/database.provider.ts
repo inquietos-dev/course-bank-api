@@ -3,6 +3,7 @@ import { UserEntity } from './entities/user.entity';
 import { ConfigService } from '@nestjs/config';
 import { Connection, createConnection } from 'typeorm';
 import * as ormconfig from '../../ormconfig';
+import { MovementEntity } from './entities/movement.entity';
 
 export const databaseProviders = [
   {
@@ -26,6 +27,12 @@ export const databaseProviders = [
     provide: 'ACCOUNT_REPOSITORY',
     useFactory: (connection: Connection) =>
       connection.getRepository(AccountEntity),
+    inject: ['DATABASE_CONNECTION'],
+  },
+  {
+    provide: 'MOVEMENT_REPOSITORY',
+    useFactory: (connection: Connection) =>
+      connection.getRepository(MovementEntity),
     inject: ['DATABASE_CONNECTION'],
   },
 ];
