@@ -15,7 +15,7 @@ export const databaseProviders = [
         password: config.get('database.postgres.password'),
         database: config.get('database.postgres.database'),
         entities: [__dirname + '/../**/*.entity{.ts,.js}'],
-        synchronize: true,
+        synchronize: config.get('environment') === 'development',
         logging: ['query', 'error'],
       });
     },

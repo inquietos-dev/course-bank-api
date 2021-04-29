@@ -21,7 +21,7 @@ export class UserEntity {
   @Column('varchar', { length: 200 })
   surname: string;
 
-  @Column('integer')
+  @Column('integer', { nullable: true })
   age: number;
 
   @Column('varchar', { length: 100, default: 'USER' })
