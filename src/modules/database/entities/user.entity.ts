@@ -30,7 +30,7 @@ export class UserEntity {
   @Column('varchar', { length: 200 })
   password: string;
 
-  @Column('varchar', { length: 200, nullable: true })
+  @Column('varchar', { length: 180, nullable: true })
   city: string;
 
   @Column('text')

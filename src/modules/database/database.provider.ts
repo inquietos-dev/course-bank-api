@@ -2,21 +2,16 @@ import { AccountEntity } from './entities/account.entity';
 import { UserEntity } from './entities/user.entity';
 import { ConfigService } from '@nestjs/config';
 import { Connection, createConnection } from 'typeorm';
+import * as ormconfig from '../../ormconfig';
 
 export const databaseProviders = [
   {
     provide: 'DATABASE_CONNECTION',
     useFactory: async (config: ConfigService) => {
+      // @ts-ignore
       return await createConnection({
-        type: 'postgres',
+        ...ormconfig,
         host: config.get('database.postgres.host'),
-        port: config.get('database.postgres.port'),
-        username: config.get('database.postgres.user'),
-        password: config.get('database.postgres.password'),
-        database: config.get('database.postgres.database'),
-        entities: [__dirname + '/../**/*.entity{.ts,.js}'],
-        synchronize: config.get('environment') === 'development',
-        logging: ['query', 'error'],
       });
     },
     inject: [ConfigService],
