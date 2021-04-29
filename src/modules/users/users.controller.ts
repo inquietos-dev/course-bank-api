@@ -12,6 +12,7 @@ import {
   Patch,
   Post,
   Query,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { StringToArrayPipe } from '../../common/pipes/string-to-array.pipe';
@@ -19,6 +20,7 @@ import { CreateUserDto } from './dtos/create-user.dto';
 import { UpdateUserDto } from './dtos/update-user.dto';
 import { Pagination } from '../../common/decorators/pagination.decorator';
 import { PaginationDto } from '../../common/dtos/pagination.dto';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('user')
 @UseInterceptors(ClassSerializerInterceptor)
@@ -26,6 +28,7 @@ export class UsersController {
   constructor(private userService: UsersService) {}
 
   @Get()
+  @UseGuards(AuthGuard('jwt'))
   getAll(
     @Query('ids', new StringToArrayPipe(false)) ids: number[],
     @Query('email') emailFilter: string,

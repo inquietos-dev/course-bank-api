@@ -11,31 +11,6 @@ import { AccountEntity } from '../database/entities/account.entity';
 
 @Injectable()
 export class UsersService {
-  users = [
-    {
-      id: 1,
-      name: 'Raul',
-      surname: 'Requero',
-      role: 'ADMIN',
-      createdAt: new Date(),
-      password: 'pepe',
-      email: 'raul@gmail.com',
-      age: 33,
-      city: 'SG',
-    },
-    {
-      id: 2,
-      name: 'Raul2',
-      surname: 'Requero2',
-      role: 'USER',
-      createdAt: new Date(),
-      password: 'pepe',
-      email: 'raul2@gmail.com',
-      age: 33,
-      city: 'SG',
-    },
-  ];
-
   constructor(
     @Inject('USER_REPOSITORY') private userRepository: Repository<UserEntity>,
     private accountService: AccountService,
@@ -117,6 +92,14 @@ export class UsersService {
     const user = await this.getOneEntity(id);
 
     await this.userRepository.remove(user);
+    return new User(user);
+  }
+
+  public async getByEmail(email: string): Promise<User> {
+    const user = await this.userRepository
+      .createQueryBuilder('u')
+      .andWhere('u.email = :email', { email })
+      .getOne();
     return new User(user);
   }
 }

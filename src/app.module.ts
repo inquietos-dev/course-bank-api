@@ -13,6 +13,7 @@ import config from './app.config';
 import { UsersModule } from './modules/users/users.module';
 import { NotificationsModule } from './modules/notifications/notifications.module';
 import { EventEmitterModule } from '@nestjs/event-emitter';
+import { AuthModule } from './modules/auth/auth.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
     UsersModule,
     AccountModule,
     NotificationsModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],

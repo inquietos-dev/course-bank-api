@@ -6,11 +6,9 @@ export class MovementsController {
   constructor(private movementService: MovementsService) {}
 
   @Get()
-  async getAll(
-    @Param('accountId', ParseIntPipe) accountId: number,
-  ) {
+  async getAll(@Param('accountId', ParseIntPipe) accountId: number) {
     return this.movementService.getAll(accountId);
-  };
+  }
 
   @Get(':id')
   async getOne(
@@ -19,5 +17,4 @@ export class MovementsController {
   ) {
     return this.movementService.getOne(accountId, movementId);
   }
-
 }

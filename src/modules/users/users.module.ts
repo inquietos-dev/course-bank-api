@@ -14,6 +14,7 @@ import { DatabaseModule } from '../database/database.module';
   imports: [DatabaseModule, AccountModule],
   controllers: [UsersController],
   providers: [UsersService],
+  exports: [UsersService],
 })
 export class UsersModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {

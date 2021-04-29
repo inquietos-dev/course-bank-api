@@ -6,9 +6,7 @@ import { DatabaseModule } from '../database/database.module';
 import { MovementsModule } from './modules/movements/movements.module';
 
 @Module({
-  imports: [
-    DatabaseModule,
-    MovementsModule],
+  imports: [DatabaseModule, MovementsModule],
   controllers: [AccountController],
   providers: [AccountService],
   exports: [AccountService],
