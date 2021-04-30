@@ -1,10 +1,7 @@
 import * as mongoose from 'mongoose';
-
 export const logSchema = new mongoose.Schema({
-  action: String,
-  account: Number,
-  amount: Number,
-  timestamp: {
+  token: String,
+  expiresAt: {
     type: Date,
     default: Date.now,
     expires: 3600,
