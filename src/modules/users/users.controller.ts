@@ -23,15 +23,29 @@ import { PaginationDto } from '../../common/dtos/pagination.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { Roles } from '../../common/decorators/roles.decorator';
 import { RolesGuard } from '../../common/guards/roles.guard';
+import {
+  ApiBadRequestResponse,
+  ApiBearerAuth,
+  ApiCreatedResponse, ApiForbiddenResponse, ApiInternalServerErrorResponse,
+  ApiOkResponse,
+  ApiQuery,
+  ApiTags, ApiUnauthorizedResponse
+} from '@nestjs/swagger';
+import { User } from './classes/user.class';
+import { BadRequest } from '../../common/classes/bad-request.class';
 
 @Controller('user')
 @UseInterceptors(ClassSerializerInterceptor)
+@ApiTags('user')
+@ApiBearerAuth()
+@Roles('USER')
+@UseGuards(AuthGuard('jwt'), RolesGuard)
 export class UsersController {
   constructor(private userService: UsersService) {}
 
   @Get()
-  @Roles('USER')
-  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @ApiQuery({ name: 'ids', type: Number, isArray: true, example: [1,2], required: false })
+  @ApiQuery({ name: 'email', type: String, example: 'pepe@gmail.com', required: false })
   getAll(
     @Query('ids', new StringToArrayPipe(false)) ids: number[],
     @Query('email') emailFilter: string,
@@ -46,12 +60,17 @@ export class UsersController {
       'id',
       new ParseIntPipe({ errorHttpStatusCode: HttpStatus.I_AM_A_TEAPOT }),
     )
-    id,
+    id: number,
   ) {
     return this.userService.getOne(id);
   }
 
   @Post()
+  @ApiCreatedResponse({ description: 'User created', type: User })
+  @ApiBadRequestResponse({ description: 'Validation Error', type: BadRequest })
+  @ApiUnauthorizedResponse()
+  @ApiForbiddenResponse()
+  @ApiInternalServerErrorResponse()
   create(@Body() body: CreateUserDto) {
     return this.userService.create(body);
   }

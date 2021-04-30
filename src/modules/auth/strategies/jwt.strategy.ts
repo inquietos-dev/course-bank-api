@@ -17,7 +17,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   async validate(request: Request, payload: any): Promise<any> {
     if (
       !(await this.authService.isValidJWT(
-        request.headers.authorization.replace('bearer', '').trim(),
+        request.headers.authorization.replace(/Bearer/gi, '').trim(),
       ))
     ) {
       throw new UnauthorizedException('Token not valid');
