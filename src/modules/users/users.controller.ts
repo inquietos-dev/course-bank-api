@@ -21,6 +21,8 @@ import { UpdateUserDto } from './dtos/update-user.dto';
 import { Pagination } from '../../common/decorators/pagination.decorator';
 import { PaginationDto } from '../../common/dtos/pagination.dto';
 import { AuthGuard } from '@nestjs/passport';
+import { Roles } from '../../common/decorators/roles.decorator';
+import { RolesGuard } from '../../common/guards/roles.guard';
 
 @Controller('user')
 @UseInterceptors(ClassSerializerInterceptor)
@@ -28,7 +30,8 @@ export class UsersController {
   constructor(private userService: UsersService) {}
 
   @Get()
-  @UseGuards(AuthGuard('jwt'))
+  @Roles('USER')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
   getAll(
     @Query('ids', new StringToArrayPipe(false)) ids: number[],
     @Query('email') emailFilter: string,
