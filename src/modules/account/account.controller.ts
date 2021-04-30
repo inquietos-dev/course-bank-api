@@ -13,6 +13,7 @@ import {
   Patch,
   Post,
   Query,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { UpdateBalanceDTO } from './dtos/update-balance.dto';
@@ -20,13 +21,18 @@ import { Pagination } from '../../common/decorators/pagination.decorator';
 import { PaginationDto } from '../../common/dtos/pagination.dto';
 import { User } from '../../common/decorators/user.decorator';
 import { ParseFloatPipe } from 'src/common/pipes/parse-float.pipe';
+import { AuthGuard } from '@nestjs/passport';
+import { RolesGuard } from 'src/common/guards/roles.guard';
+import { Roles } from 'src/common/decorators/roles.decorator';
 
 @Controller('account')
 @UseInterceptors(ClassSerializerInterceptor)
+@UseGuards(AuthGuard('jwt'), RolesGuard)
 export class AccountController {
   constructor(private accountService: AccountService) {}
 
   @Get()
+  @Roles('ADMIN')
   async getAll(
     @Pagination() pagination: PaginationDto,
     @Query('amount', new ParseFloatPipe(false)) amountFilter,
@@ -42,6 +48,7 @@ export class AccountController {
   }
 
   @Get(':id')
+  @Roles('ADMIN')
   getOne(
     @Param('id', ParseIntPipe) id: number,
     @Query('includes', new StringToArrayPipe(false, 'string')) includes,
@@ -50,11 +57,13 @@ export class AccountController {
   }
 
   @Post()
+  @Roles('ADMIN')
   create(@Body() body: CreateAccountDTO) {
     return this.accountService.create(body);
   }
 
   @Patch(':id')
+  @Roles('ADMIN')
   async update(
     @Param('id', ParseIntPipe) id: number,
     @Body() body: UpdateAccountDTO,
@@ -63,11 +72,13 @@ export class AccountController {
   }
 
   @Delete(':id')
+  @Roles('ADMIN')
   async delete(@Param('id', ParseIntPipe) id: number) {
     return this.accountService.delete(id);
   }
 
   @Post(':id/balance')
+  @Roles('ADMIN')
   async updateBalance(
     @Param('id', ParseIntPipe) id: number,
     @Body() body: UpdateBalanceDTO,

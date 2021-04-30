@@ -1,3 +1,4 @@
+import { TokenEntity } from './entities/token.entity';
 import { AccountEntity } from './entities/account.entity';
 import { UserEntity } from './entities/user.entity';
 import { ConfigService } from '@nestjs/config';
@@ -33,6 +34,12 @@ export const databaseProviders = [
     provide: 'MOVEMENT_REPOSITORY',
     useFactory: (connection: Connection) =>
       connection.getRepository(MovementEntity),
+    inject: ['DATABASE_CONNECTION'],
+  },
+  {
+    provide: 'TOKEN_REPOSITORY',
+    useFactory: (connection: Connection) =>
+      connection.getRepository(TokenEntity),
     inject: ['DATABASE_CONNECTION'],
   },
 ];
