@@ -12,6 +12,8 @@ import { Account } from './classes/account.class';
 import { PaginationDto } from '../../common/dtos/pagination.dto';
 import { Connection, EntityManager, Repository } from 'typeorm';
 import { AccountEntity } from '../database/entities/account.entity';
+import { Model } from 'mongoose';
+import { Log } from '../mongo/interfaces/log.interface';
 
 @Injectable()
 export class AccountService {
@@ -20,6 +22,8 @@ export class AccountService {
     private accountRepository: Repository<AccountEntity>,
     @Inject('DATABASE_CONNECTION')
     private connection: Connection,
+    @Inject('LOG_MODEL')
+    private logModel: Model<Log>,
   ) {}
 
   public async getAll(
@@ -115,6 +119,14 @@ export class AccountService {
         }
         account.amount += body.amount;
         account = await accountRepository.save(account);
+
+        const log = new this.logModel({
+          action: 'update_balance',
+          amount: body.amount,
+          account: account.id,
+        });
+        await log.save();
+
         return new Account(account);
       },
     );

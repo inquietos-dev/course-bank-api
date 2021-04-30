@@ -9,5 +9,8 @@ export default () => ({
       password: process.env.DB_POSTGRES_PASSWORD,
       db: process.env.DB_POSTGRES_DB,
     },
+    mongo: {
+      url: process.env.DB_MONGO_URL,
+    },
   },
 });
